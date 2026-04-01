@@ -9,6 +9,12 @@ pipeline {
             }
         }
 
+        stage('Clean Docker') {
+            steps {
+                bat 'docker-compose down'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t student-app .'

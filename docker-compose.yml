@@ -14,5 +14,5 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: student_management
-    ports:
-      - "3308:3306"
+    # ports:
+    #   - "3308:3306"
