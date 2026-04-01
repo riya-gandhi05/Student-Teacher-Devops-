@@ -2,21 +2,22 @@ pipeline {
     agent any
 
     stages {
+
         stage('Clone') {
             steps {
                 git branch: 'main', url: 'https://github.com/riya-gandhi05/Student-Teacher-Devops-.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build Docker Image') {
             steps {
-                bat 'npm install'
+                bat 'docker build -t student-app .'
             }
         }
 
-        stage('Run App') {
+        stage('Run Docker Compose') {
             steps {
-                bat 'node server.js'
+                bat 'docker-compose up -d'
             }
         }
     }
