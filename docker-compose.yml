@@ -4,21 +4,44 @@ services:
   app:
     build: .
     ports:
-      - "9000:4000"
+      - "9001:4000"
     depends_on:
       - mysql
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: root
-      DB_NAME: student_management
-    command: sh -c "sleep 20 && node server.js"
+    env_file:
+      - .env
 
   mysql:
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: student_management
+      MYSQL_DATABASE: fsdb
     # ports:
-    #   - "3308:3306"
+    #   - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - "5000:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  mysql_data:
+  jenkins_home:

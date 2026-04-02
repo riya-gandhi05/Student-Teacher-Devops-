@@ -5,7 +5,7 @@ require("dotenv").config();
 require('dotenv').config();
 const db = require('./db');
 const app = express();
-
+const client = require('prom-client');
 const { initDb } = require("./config/db");
 
 const authRoutes = require("./routes/auth.routes");
@@ -13,6 +13,7 @@ const dashboardRoutes = require("./routes/dashboard.routes");
 const teacherRoutes = require("./routes/teacher.routes");
 const studentRoutes = require("./routes/student.routes");
 const adminRoutes = require("./routes/admin.routes");
+client.collectDefaultMetrics();
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -40,6 +41,12 @@ app.use("/", dashboardRoutes);
 app.use("/teacher", teacherRoutes);
 app.use("/student", studentRoutes);
 app.use("/admin", adminRoutes);
+
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
+});
 
 app.use((req, res) => {
   res.status(404).render("error", { message: "Page not found" });
