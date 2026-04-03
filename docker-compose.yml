@@ -23,7 +23,7 @@ services:
     user: root                  # 🔥 IMPORTANT
     privileged: true            # 🔥 IMPORTANT
     ports:
-      - "5000:8080"
+      - "5001:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
