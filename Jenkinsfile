@@ -16,7 +16,27 @@ pipeline {
 
         stage('Fix Prometheus') {
             steps {
-                sh '[ -d prometheus.yml ] && rm -rf prometheus.yml && git checkout -- prometheus.yml || echo "prometheus.yml is already a file, OK"'
+                sh '''
+                    if [ -d prometheus.yml ]; then
+                        rm -rf prometheus.yml
+                    fi
+                    if [ ! -f prometheus.yml ]; then
+                        cat > prometheus.yml << 'EOF'
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - localhost:9090
+  - job_name: student-app
+    static_configs:
+      - targets:
+          - app:4000
+EOF
+                    fi
+                '''
             }
         }
 
