@@ -4,7 +4,8 @@ services:
     ports:
       - "9001:4000"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     env_file:
       - .env
 
@@ -15,7 +16,7 @@ services:
     user: root
     privileged: true
     ports:
-      - "5001:8080"
+      - "5002:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
@@ -30,16 +31,17 @@ services:
       MYSQL_DATABASE: fsdb
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   prometheus:
     image: prom/prometheus
-    # ports:
-    #   - "9092:9090"
 
   grafana:
     image: grafana/grafana
-    # ports:
-    #   - "3001:3000"
     depends_on:
       - prometheus
 
