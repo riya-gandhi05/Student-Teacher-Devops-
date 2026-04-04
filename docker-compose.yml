@@ -8,6 +8,21 @@ services:
     env_file:
       - .env
 
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    user: root
+    privileged: true
+    ports:
+      - "5001:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+
   mysql:
     image: mysql:8
     environment:
@@ -30,3 +45,4 @@ services:
 
 volumes:
   mysql_data:
+  jenkins_home:
