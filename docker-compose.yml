@@ -47,8 +47,9 @@ services:
     image: prom/prometheus:latest
     ports:
       - "9091:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
     restart: unless-stopped
     networks:
       - app-network
@@ -67,3 +68,7 @@ volumes:
 
 networks:
   app-network:
+
+configs:
+  prometheus_config:
+    file: ./prometheus.yml
