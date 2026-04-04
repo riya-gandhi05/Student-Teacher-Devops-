@@ -8,11 +8,13 @@ pipeline {
             }
         }
 
-        stage('Clean Docker') {
-            steps {
-                sh 'docker-compose down -v --remove-orphans || true'
-            }
-        }
+    stage('Clean Docker') {
+        sh '''
+        docker-compose down -v --remove-orphans
+        docker system prune -f
+        docker volume prune -f
+        '''
+    }
 
         stage('Build Docker Image') {
             steps {
