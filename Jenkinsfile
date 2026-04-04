@@ -14,6 +14,12 @@ pipeline {
             }
         }
 
+        stage('Fix Prometheus') {
+            steps {
+                sh '[ -d prometheus.yml ] && rm -rf prometheus.yml && git checkout -- prometheus.yml || echo "prometheus.yml is already a file, OK"'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t student-app .'
