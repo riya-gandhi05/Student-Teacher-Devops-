@@ -11,18 +11,6 @@ pipeline {
         stage('Clean Docker') {
             steps {
                 sh 'docker-compose down -v --remove-orphans || true'
-                sh 'rm -rf /var/jenkins_home/workspace/student-teacher-devops/prometheus.yml || true'
-            }
-        }
-
-        stage('Fix Prometheus') {
-            steps {
-                sh '''
-                    rm -rf prometheus.yml
-                    printf 'global:\\n  scrape_interval: 15s\\n\\nscrape_configs:\\n  - job_name: prometheus\\n    static_configs:\\n      - targets:\\n          - localhost:9090\\n  - job_name: student-app\\n    static_configs:\\n      - targets:\\n          - app:4000\\n' > prometheus.yml
-                    echo "prometheus.yml created:"
-                    cat prometheus.yml
-                '''
             }
         }
 
@@ -35,6 +23,28 @@ pipeline {
         stage('Run Docker Compose') {
             steps {
                 sh 'docker-compose up -d --build'
+            }
+        }
+
+        stage('Configure Prometheus') {
+            steps {
+                sh '''
+                    docker exec student-teacher-devops-prometheus-1 sh -c "cat > /etc/prometheus/prometheus.yml << EOF
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - localhost:9090
+  - job_name: student-app
+    static_configs:
+      - targets:
+          - app:4000
+EOF"
+                    docker exec student-teacher-devops-prometheus-1 kill -HUP 1 || true
+                '''
             }
         }
     }
