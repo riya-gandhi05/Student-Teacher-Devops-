@@ -11,6 +11,7 @@ pipeline {
         stage('Clean Docker') {
             steps {
                 sh 'docker-compose down -v --remove-orphans || true'
+                sh 'rm -rf /var/jenkins_home/workspace/student-teacher-devops/prometheus.yml || true'
             }
         }
 
