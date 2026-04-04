@@ -6,7 +6,10 @@ pipeline {
         stage('Clean Docker') {
             steps {
                 sh '''
-                docker-compose -p fsdbproject down --remove-orphans
+                docker rm -f fsdbproject-app-1 || true
+                docker rm -f fsdbproject-mysql-1 || true
+                docker rm -f fsdbproject-prometheus-1 || true
+                docker rm -f fsdbproject-grafana-1 || true
                 docker system prune -f
                 '''
             }
