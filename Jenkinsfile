@@ -28,13 +28,13 @@ pipeline {
                         sh """
                         docker stop fsdbproject-app || true
                         docker rm fsdbproject-app || true
-                        docker-compose -p fsdbproject up -d app
+                        docker-compose -p fsdbproject up -d
                         """
                     } else {
                         bat """
-                        docker stop fsdbproject-app
-                        docker rm fsdbproject-app
-                        docker-compose -p fsdbproject up -d app
+                        docker stop fsdbproject-app || exit 0
+                        docker rm fsdbproject-app || exit 0
+                        docker-compose -p fsdbproject up -d
                         """
                     }
                 }
@@ -45,9 +45,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh "docker exec fsdbproject-prometheus-1 kill -HUP 1"
+                        sh "docker exec fsdbproject-prometheus-1 kill -HUP 1 || true"
                     } else {
-                        bat "docker exec fsdbproject-prometheus-1 kill -HUP 1"
+                        bat "docker exec fsdbproject-prometheus-1 kill -HUP 1 || exit 0"
                     }
                 }
             }
