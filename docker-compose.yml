@@ -1,8 +1,8 @@
 services:
   app:
-    build: .
+    image: student-app:latest
     ports:
-      - "4000"
+      - "4021:4000"
     depends_on:
       mysql:
         condition: service_healthy
@@ -33,12 +33,10 @@ services:
       context: .
       dockerfile: Dockerfile.jenkins
     ports:
-      - "8080"
+      - "5031:8080"
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - DOCKER_HOST=unix:///var/run/docker.sock
     restart: always
     networks:
       - app-network
@@ -46,7 +44,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     ports:
-      - "9090"
+      - "9094:9090"
     volumes:
       - prometheus_data:/prometheus
     restart: unless-stopped
@@ -56,7 +54,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3000"
+      - "3024:3000"
     restart: unless-stopped
     networks:
       - app-network
