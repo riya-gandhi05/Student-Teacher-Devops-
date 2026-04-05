@@ -1,6 +1,9 @@
+version: '3.9'
+
 name: fsdbproject
 
 services:
+
   app:
     image: student-app:latest
     container_name: fsdbproject-app
@@ -17,6 +20,7 @@ services:
 
   mysql:
     image: mysql:8
+    container_name: fsdbproject-mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -35,6 +39,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.jenkins
+    container_name: fsdbproject-jenkins
     ports:
       - "5031:8080"
     volumes:
@@ -46,6 +51,7 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
+    container_name: fsdbproject-prometheus-1
     ports:
       - "9094:9090"
     volumes:
@@ -56,11 +62,13 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    container_name: fsdbproject-grafana
     ports:
       - "3024:3000"
     restart: unless-stopped
     networks:
       - app-network
+
 
 volumes:
   mysql_data:
